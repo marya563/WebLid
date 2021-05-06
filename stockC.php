@@ -1,45 +1,44 @@
 <?PHP
 	include "../config.php";
-	require_once '../Model/Pdv.php';
+	require_once '../Model/stock.php';
 
-	class pdvC {
+	class stockC {
 		
-		function ajouterpdv($pdv){
-			$sql="INSERT INTO pdv (adresse_pdv, nom_pdv, nb_employee) 
-			VALUES (:adresse_pdv,:nom_pdv,:nb_employee)";
+		function ajouterstock($stock){
+            $sql="INSERT INTO stock (nb_tickets, disponible) 
+			VALUES (:nb_tickets,:disponible)";
 			$db = config::getConnexion();
 			try{
 				$query = $db->prepare($sql);
 			
 				$query->execute([
-					'adresse_pdv' => $pdv->getAdresse(),
-					'nom_pdv' => $pdv->getNom(),
-					'nb_employee' => $pdv->getNombre()
+					'nb_tickets' => $stock->getTickets(),
+					'disponible' => $stock->getDisponible()
 				]);			
 			}
 			catch (Exception $e){
 				echo 'Erreur: '.$e->getMessage();
-			}			
-		}
+            }
+	}
 		
-		function afficherpdv(){
+		function afficherstock(){
 			
-			$sql="SELECT * FROM pdv";
+			$sql="SELECT * FROM stock";
 			$db = config::getConnexion();
 			try{
-				$vente = $db->query($sql);
-				return $vente;
+				$st = $db->query($sql);
+				return $st;
 			}
 			catch (Exception $e){
 				die('Erreur: '.$e->getMessage());
 			}	
 		}
 
-		function supprimerpdv($id_pdv){
-			$sql="DELETE FROM pdv WHERE id_pdv= :id_pdv";
+		function supprimerstock($id_stock){
+			$sql="DELETE FROM stock WHERE id_stock= :id_stock";
 			$db = config::getConnexion();
 			$req=$db->prepare($sql);
-			$req->bindValue(':id_pdv',$id_pdv);
+			$req->bindValue(':id_stock',$id_stock);
 			try{
 				$req->execute();
 			}
@@ -47,8 +46,8 @@
 				die('Erreur: '.$e->getMessage());
 			}
 		}
-			function getPromotion($id_pdv){
-		$sql="SELECT * from pdv where id_pdv=$id_pdv";
+			function getPromotion($id_stock){
+		$sql="SELECT * from stock where id_stock=$id_stock";
 		$db = config::getConnexion();
 		try{
 		$compte=$db->query($sql);
@@ -58,34 +57,32 @@
             die('Erreur: '.$e->getMessage());
         }
 	}
-		function modifierpdv($pdv, $id_pdv){
+		function modifierstock($stock, $id_stock){
 			try {
 				$db = config::getConnexion();
 				$query = $db->prepare(
-					'UPDATE pdv SET 
-						adresse_pdv = :adresse_pdv, 
-						nom_pdv = :nom_pdv,
-						nb_employee = :nb_employee
-					WHERE id_pdv = :id_pdv'
+					'UPDATE stock SET 
+						nb_tickets = :nb_tickets, 
+						disponible = :disponible,
+					WHERE id_stock = :id_stock'
 				);
-				$query->bindValue(':adresse_pdv',$utilisateur->getAdresse());
-				$query->bindValue(':nom_pdv',$utilisateur->getNom());
-				$query->bindValue(':nb_employee',$utilisateur->getNombre());
-				$query->bindValue(':id_pdv',$id_pdv);
+				$query->bindValue(':nb_tickets',$utilisateur->getTickets());
+				$query->bindValue(':disponible',$utilisateur->getDisponible());
+				$query->bindValue(':id_stock',$id_stock);
 				$query->execute();
 			} catch (PDOException $e) {
 				$e->getMessage();
 			}
 		}
-		function recupererpdv($id_pdv){
-			$sql="SELECT * from pdv where id_pdv=$id_pdv";
+		function recupererstock($id_stock){
+			$sql="SELECT * from stock where id_stock=$id_stock";
 			$db = config::getConnexion();
 			try{
 				$query=$db->prepare($sql);
 				$query->execute();
 
-				$pdv=$query->fetch();
-				return $pdv;
+				$stock=$query->fetch();
+				return $stock;
 			}
 			catch (Exception $e){
 				die('Erreur: '.$e->getMessage());
@@ -93,7 +90,7 @@
 		}
 function recuperer()
 	{
-   		$sql="SELECT * from pdv";
+   		$sql="SELECT * from stock";
 		$db = config::getConnexion();
 		
 		try
@@ -107,22 +104,22 @@ function recuperer()
             die('Erreur: '.$e->getMessage());
         }
 	}
-		function recupererpdv1($id_pdv){
-			$sql="SELECT * from pdv where id_pdv=$id_pdv";
+		function recupererstock1($id_stock){
+			$sql="SELECT * from stock where id_stock=$id_stock";
 			$db = config::getConnexion();
 			try{
 				$query=$db->prepare($sql);
 				$query->execute();
 				
-				$pdv = $query->fetch(PDO::FETCH_OBJ);
-				return $pdv;
+				$stock = $query->fetch(PDO::FETCH_OBJ);
+				return $stock;
 			}
 			catch (Exception $e){
 				die('Erreur: '.$e->getMessage());
 			}
 		}
-			function getAllcpdv($keywords){
-		$sql="SELECT * FROM pdv WHERE CONCAT(`id_pdv`,`adresse_pdv`,`nom_pdv`,`nb_employee`) LIKE '%".$keywords."%'";
+			function getAllcstock($keywords){
+		$sql="SELECT * FROM stock WHERE CONCAT(`id_stock`,`nb_tickets`,`disponible`) LIKE '%".$keywords."%'";
 		$db = config::getConnexion();
 		try{
 		$liste=$db->query($sql);
@@ -133,7 +130,7 @@ function recuperer()
         }	
     }
     function triec(){
-		$sql="SELECT * from pdv order by nb_employee desc";
+		$sql="SELECT * from stock order by nb_tickets desc";
 		$db = config::getConnexion();
 		try{
 		$liste=$db->query($sql);
@@ -144,7 +141,7 @@ function recuperer()
         }
 	}
 	function trieD(){
-		$sql="SELECT * from pdv order by nb_employee asc";
+		$sql="SELECT * from stock order by nb_tickets asc";
 		$db = config::getConnexion();
 		try{
 		$liste=$db->query($sql);
@@ -156,5 +153,3 @@ function recuperer()
 	} 
 		
 	}
-
-?>
